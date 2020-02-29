@@ -1,36 +1,8 @@
 # Data-Science-With-R---Music-data-
-### *** Play counts *** ###
-lastfm <- read.csv("E:/Simplilearn/Data Science with R/Project/Projects with Solution/Data Science Project_1-Association/Data Science Project_Association/lastfm.csv")
-lastfm[1:19,]
-length(lastfm$user)                               ## 289,955 records in the file
-lastfm$user <- factor(lastfm$user)
-levels(lastfm$user)                              ## 15,000 users
-levels(lastfm$artist)                            ## 1,004 artists
-rules.library ("arules")                                ## a-rules package for association rules
-                                               ## Computational environment for mining association rules and
-                                              ## frequent item sets
-                                             ## we need to manipulate the data a bit for arules
-playlist <- split(x=lastfm[,"artist"],f=lastfm$user) ## split into a list of users
-playlist <- lapply(playlist,unique) ## remove artist duplicates
-playlist[1:2]
-                                          ## the first two listeners (1 and 3) listen to the following bands
-playlist <- as(playlist,"transactions")
-            ## view this as a list of "transactions"
-## transactions is a data class defined in arules
-itemFrequency(playlist)
-## lists the support of the 1,004 bands
-## number of times band is listed to on the shopping trips of 15,000 users
-## computes the rel freq each artist mentioned by the 15,000 users
-itemFrequencyPlot(playlist,support=.08,cex.names=1.5)
-## plots the item frequencies (only bands with > % support)
-## Finally, we build the association rules
-## only rules with support > 0.01 and confidence > .50
-## so it can't be a super rare band
-musicrules <- apriori(playlist,parameter=list(support=.01,confidence=.5))
-inspect(musicrules)
-## let's filter by lift > 5.
-## Among those associations with support > 0.01 and confidence > .50,
-## only show those with lift > 5
-inspect(subset(musicrules, subset=lift > 5))
-## lastly, order by confidence to make it easier to understand
-inspect(sort(subset(musicrules, subset=lift > 5), by="confidence"))
+Suppose that you are provided with data from a music community site, giving you details of each user. This will further help you get access on a log of every artist that the listed users have downloaded on their computer. With this data, you will also get information on the demographics of the listed users (such as age, sex, location, occupation, and interests).  The objective of providing this data lies in building a system that recommends new music to the users in this listed community. From the available information, it is usually not difficult to determine the support for various individual artists (that is, the frequencies of a specific music genre/artist or song that a user is listening to) as well as the joint support for pairs (or larger groupings) of artists. Here, you need to count the number of incidences across all your network members. After this, you need to divide those frequencies with the number of members. Using the support value, you can calculate the values of confidence and lift.
+
+In the mentioned data set data setnti,” a large chunk of information close to 300,000 records of song (or artistsr) selections is listed that is per the listening frequency given by 15,000 users. Each row of the data set contains the name of the artist that the user has been listening to. The first user is a German lady, who has listened to 16 artists. This has resulted in the first 16 rows of the data matrix.
+
+First, what you need to accomplish is to transform the data given here into an incidence matrix, where each listener represents a row, with 0s and 1s across the columns. This indicates if he or she has played a certain artist or not. Then, the support for each of the listed 1004 artists needs to be calculated by displaying the support for all artists with support larger than 0.08.
+
+Then, construct the association rules using the function Apriori in the R package arules and then look for artists (or groups of artists) who have support that is larger than 0.01 (1%). After the calculation is checked, another music collection of an artist turns out to be larger than 0.50 (50%). 
